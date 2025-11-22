@@ -1,5 +1,5 @@
 // doing the double linked list, the difference is that it has a previous
-
+const util = require("node:util");
 class Node {
   constructor(num) {
     this.num = num;
@@ -303,12 +303,236 @@ class Queue {
   }
 }
 
-const queue = new Queue();
-queue.push("C");
-queue.push("H");
-queue.push("I");
-queue.push("N");
-queue.push("E");
-queue.push("D");
-console.log(queue.pop());
-console.dir(queue, { depth: null, color: true });
+// const queue = new Queue();
+// queue.push("C");
+// queue.push("H");
+// queue.push("I");
+// queue.push("N");
+// queue.push("E");
+// queue.push("D");
+// console.log(queue.pop());
+// console.dir(queue, { depth: null, color: true });
+
+class NodeBst {
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+  }
+}
+class BinarySearchTree {
+  constructor() {
+    this.root = null;
+  }
+  insert_method(val) {
+    const new_node = new NodeBst(val);
+    if (!this.root) {
+      this.root = new_node;
+      return this;
+    } else {
+      let current = this.root;
+      let keepMoving = true;
+      while (keepMoving && current) {
+        if (val === current.value) keepMoving = false;
+        if (val < current.value) {
+          if (current.left === null) {
+            current.left = new_node;
+            return this;
+          } else {
+            current = current.left;
+          }
+        } else if (val > current.value) {
+          if (current.right === null) {
+            current.right = new_node;
+            return this;
+          } else {
+            current = current.right;
+          }
+        }
+      }
+    }
+  }
+  find_method(val) {
+    let keepMoving = true;
+    let current = this.root;
+    while (keepMoving && current) {
+      if (val < current.value) {
+        current = current.left;
+      } else if (val === current.value) {
+        keepMoving = false;
+        return current;
+      } else {
+        current = current.right;
+      }
+    }
+    return null; // fall of the tree is notthing is found
+  }
+
+  breath_first_search() {
+    let data = [];
+    let queue = [];
+    let node = this.root;
+    //* pushing in the node to the queue, first,
+    queue.push(node);
+    while (queue.length) {
+      node = queue.shift();
+      data.push(node.value);
+      if (node.left) queue.push(node.left);
+      if (node.right) queue.push(node.right);
+    }
+    return data;
+  }
+  // travesing doen until, the end of the tree
+  //Pre-Order--- visiting from the top, left, left becomes top,
+  depth_first_search_pre_order() {
+    let current = this.root;
+    let data = [];
+    function traverse(node) {
+      data.push(node.value);
+      if (node.left) traverse(node.left);
+      if (node.right) traverse(node.right);
+    }
+    traverse(current);
+    return data;
+  }
+
+  depth_first_search_post_order() {
+    let current = this.root;
+    let data = [];
+    function traverse(node) {
+      if (!node) return;
+      traverse(node.left);
+      traverse(node.right);
+      data.push(node.value);
+    }
+    traverse(current);
+    return data;
+  }
+  depth_first_search_in_order() {
+    let data = [];
+    let current = this.root;
+    function traverse(node) {
+      if (!node) return;
+      traverse(node.left);
+      data.push(node.value);
+      traverse(node.right);
+    }
+    traverse(current);
+    return data;
+  }
+}
+
+const tree = new BinarySearchTree();
+// tree.insert_method(20);
+// tree.insert_method(15);
+// tree.insert_method(25);
+// tree.insert_method(10);
+// tree.insert_method(5);
+// tree.insert_method(22);
+// tree.insert_method(10);
+// tree.insert_method(10);
+// tree.insert_method(6);
+// tree.insert_method(3);
+// tree.insert_method(8);
+// tree.insert_method(15);
+// tree.insert_method(20);
+
+// console.log(tree.find_method(22));
+// console.log(tree.breath_first_search());
+// console.log(tree.depth_first_search_pre_order());
+// console.log(tree.depth_first_search_post_order());
+// console.log(tree.depth_first_search_in_order());
+// console.log(tree.depth_first_search_pre_order());
+// console.dir(tree, { depth: Infinity, colors: true });
+// console.log(
+//   util.inspect(tree, { showHidden: false, depth: null, colors: true })
+// );
+
+class MaxBinaryHeap {
+  constructor() {
+    this.values = [41, 39, 33, 18, 27, 12];
+  }
+  bubbleUp() {
+    let idx = this.values.length - 1;
+    while (idx > 0) {
+      let patentIdx = Math.floor((idx - 1) / 2);
+      let temp = this.values[idx];
+      let parentValue = this.values[patentIdx];
+      if (temp <= parentValue) break;
+      this.values[idx] = this.values[patentIdx];
+      this.values[patentIdx] = temp;
+      idx = patentIdx;
+    }
+  }
+  insert(val) {
+    this.values.push(val);
+    this.bubbleUp();
+    return this.values;
+  }
+  sinkDown() {
+    let idx = 0;
+    const length = this.values.length;
+    const element = this.values[0];
+    while (true) {
+      let leftChildIndex = 2 * idx + 1;
+      let rightChildIndex = 2 * idx + 2;
+      let leftChild;
+      let rightChild;
+      let swap = null;
+      if (leftChildIndex < length) {
+        leftChild = this.values[leftChildIndex];
+        if (leftChild > element) {
+          swap = leftChildIndex;
+        }
+      }
+      if (rightChildIndex < length) {
+        rightChild = this.values[rightChildIndex];
+        if (
+          (swap === null && rightChild > element) ||
+          (swap !== null && rightChild > leftChild)
+        ) {
+          swap = rightChildIndex;
+        }
+      }
+      if (swap === null) break;
+      this.values[idx] = this.values[swap];
+      this.values[swap] = element;
+      idx = swap;
+    }
+  }
+  extract_max() {
+    console.log(this.values);
+    const max = this.values[0];
+    const end = this.values.pop();
+    if (this.values.length > 0) {
+      // console.log(this.values);
+      this.values[0] = end;
+      // console.log(this.values);
+      // sink Down
+      this.sinkDown();
+    }
+
+    return max;
+  }
+}
+
+const maxHeap = new MaxBinaryHeap();
+console.log(maxHeap.insert(55));
+console.log(maxHeap.insert(60));
+// console.log(maxHeap.insert(40));
+// console.log(maxHeap.extract_max());
+
+// function bubbleUp(arr) {
+//   let idx = arr.length - 1;
+//   let patentIdx = Math.floor((idx - 1) / 2);
+//   let temp = arr[idx];
+//   let parentValue = arr[patentIdx];
+//   if (temp > parentValue) {
+//     arr[idx] = arr[patentIdx];
+//     arr[patentIdx] = temp;
+//     idx = patentIdx;
+//   }
+//   return arr;
+// }
+
+// console.log(bubbleUp([41, 39, 33, 18, 27, 12, 55]));
