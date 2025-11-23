@@ -517,8 +517,8 @@ class MaxBinaryHeap {
 }
 
 const maxHeap = new MaxBinaryHeap();
-console.log(maxHeap.insert(55));
-console.log(maxHeap.insert(60));
+// console.log(maxHeap.insert(55));
+// console.log(maxHeap.insert(60));
 // console.log(maxHeap.insert(40));
 // console.log(maxHeap.extract_max());
 
@@ -536,3 +536,348 @@ console.log(maxHeap.insert(60));
 // }
 
 // console.log(bubbleUp([41, 39, 33, 18, 27, 12, 55]));
+
+// writing the Min Binary Heap- lower number means higher priority
+class PriorityHeap {
+  constructor() {
+    this.values = [];
+  }
+
+  enqueue(val, priority) {
+    let newNode = new NodePriority(val, priority);
+    this.values.push(newNode);
+    this.bubbleUp();
+  }
+  bubbleUp() {
+    let idx = this.values.length - 1;
+    const element = this.values[idx];
+    while (idx > 0) {
+      let parentIdx = Math.floor((idx - 1) / 2);
+      let parent = this.values[parentIdx];
+      if (element.priority <= parent.priority) break;
+      this.values[parentIdx] = element;
+      this.values[idx] = parent;
+      idx = parentIdx;
+    }
+  }
+  dequeue() {
+    let elem = this.values[0];
+    let last = this.values.pop();
+    this.values[0] = last;
+    if (this.values > 0) {
+      this.sinkDown();
+    }
+    return elem;
+  }
+
+  sinkDown() {
+    let idx = 0;
+    let lengthVal = this.values.length;
+    let element = this.values[0];
+    while (true) {
+      let leftChildIdx = 2 * idx + 1;
+      let rightChildIdx = 2 * idx + 2;
+      let leftChild, rightChild;
+      let swap = null;
+      if (leftChildIdx < lengthVal) {
+        leftChild = this.values[leftChildIdx];
+        if (leftChild.priority > element.priority) {
+          swap = leftChildIdx;
+        }
+      }
+      if (rightChildIdx < length) {
+        rightChild = this.values[rightChildIdx];
+        if (
+          (swap === null && rightChild.priority > element.priority) ||
+          (swap !== null && rightChild.priority > leftChild.priority)
+        ) {
+          swap = rightChildIdx;
+        }
+      }
+      if (swap === null) break;
+      this.values[idx] = this.values[swap];
+      this.values[swap] = element;
+      idx = swap;
+    }
+  }
+}
+
+class NodePriority {
+  constructor(val, priority) {
+    this.val = val;
+    this.priority = priority;
+  }
+}
+let total = 0;
+
+total += "hello".charCodeAt(0) - 96;
+total += "hello".charCodeAt(1) - 96;
+total += "hello".charCodeAt(2) - 96;
+total += "hello".charCodeAt(3) - 96;
+total += "hello".charCodeAt(4) - 96;
+
+function hash(key, arrLength) {
+  let total = 0;
+  for (let char of key) {
+    let value = char.charCodeAt(0) - 96;
+    total = (total + value) % arrLength;
+  }
+  return total;
+}
+// console.log(hash("pink", 10));
+// console.log(hash("blue", 10));
+// console.log(hash("red", 10));
+// console.log(hash("yellow", 10));
+// console.log(hash("cyan", 10));
+// console.log(hash("orange", 10));
+console.log("*********************************************");
+function improvedHashFunction(key, arrayLen) {
+  let total = 0;
+  let WEIRD_PRIME = 31;
+  for (let i = 0; i < Math.min(key.length, 100); i++) {
+    let char = key[i];
+    let value = char.charCodeAt(0) - 96;
+    total = (total * WEIRD_PRIME + value) % arrayLen;
+  }
+  return total;
+}
+// console.log(improvedHashFunction("pink", 10));
+// console.log(improvedHashFunction("blue", 10));
+// console.log(improvedHashFunction("red", 10));
+// console.log(improvedHashFunction("yellow", 10));
+// console.log(improvedHashFunction("cyan", 10));
+// console.log(improvedHashFunction("orange", 10));
+/*
+the hash function and the improvementHash Function all still have collision*********
+HOW TO HANDLE COLLISION
+1----> Separate Chaining
+2----> Linear Probing
+    (Separate chaining)
+ from my understanding of separate chainning, when we hash a value and we have a collision, like 2 or more numbers having the same vale, we can store it in that position of the array, than whe we r looking for the numbers we go to that position and loop through , which key matches what we r looking for,
+*/
+
+class HashTable {
+  constructor(size = 53) {
+    this.keyMap = new Array(size);
+  }
+
+  _hash(key) {
+    let total = 0;
+    let WEIRD_PRIME = 31;
+    for (let i = 0; i < Math.min(key.length, 100); i++) {
+      let char = key[i];
+      let value = char.charCodeAt(0) - 96;
+      total = (total * WEIRD_PRIME + value) % this.keyMap.length;
+    }
+
+    return total;
+  }
+  _set(key, value) {
+    let idx = this._hash(key);
+    if (!this.keyMap[idx]) {
+      this.keyMap[idx] = [];
+    }
+    this.keyMap[idx].push([key, value]);
+  }
+  _get(key) {
+    let idx = this._hash(key);
+    if (this.keyMap[idx]) {
+      for (let i = 0; i < this.keyMap[idx].length; i++) {
+        if (this.keyMap[idx][i][0] === key) {
+          return this.keyMap[idx][i];
+        }
+      }
+    }
+    return undefined;
+  }
+
+  values() {
+    let valuesArr = [];
+    for (let i = 0; i < this.keyMap.length; i++) {
+      if (this.keyMap[i]) {
+        for (let j = 0; j < this.keyMap[i].length; j++) {
+          if (valuesArr.includes(this.keyMap[i][j][1]))
+            valuesArr.push(this.keyMap[i][j][1]);
+        }
+      }
+    }
+    return valuesArr;
+  }
+}
+
+const hashTable = new HashTable();
+// console.log(hashTable._set("hello world", "goodbye!!"));
+// console.log(hashTable._set("dogs", "are cool"));
+// console.log(hashTable._set("cats", "are fine"));
+// console.log(hashTable._set("i love", "pizza"));
+
+// console.dir(hashTable, { depth: Infinity, colors: true });
+
+class Graph {
+  constructor() {
+    this.adjacencyList = {};
+  }
+  addVertex(vertex) {
+    const keyValue = this.adjacencyList[vertex];
+    if (!keyValue) {
+      this.adjacencyList[vertex] = [];
+    }
+  }
+  // if  already know the key, don't loop just grab it
+  addEdges_method(v1, v2) {
+    // this is O(1)
+    this.adjacencyList[v1].push(v2);
+    this.adjacencyList[v2].push(v1);
+  }
+  addEdges(vertex1, vertex2) {
+    // this is O(n)
+    for (let key in this.adjacencyList) {
+      if (key === vertex1) {
+        this.adjacencyList[key].push(vertex2);
+      }
+      if (key === vertex2) {
+        this.adjacencyList[key].push(vertex1);
+      }
+    }
+    return this.adjacencyList;
+  }
+  remove_edge(v1, v2) {
+    if (!this.adjacencyList[v1] || !this.adjacencyList[v2]) return;
+    let idx1 = this.adjacencyList[v2].indexOf(v1);
+    let idx2 = this.adjacencyList[v1].indexOf(v2);
+
+    if (idx2 !== -1) this.adjacencyList[v1].splice(idx2, 1);
+    if (idx1 !== -1) this.adjacencyList[v2].splice(idx1, 1);
+  }
+  remove_vertex(vertex) {
+    if (!this.adjacencyList[vertex]) return undefined;
+    for (let key in this.adjacencyList) {
+      if (this.adjacencyList[key].includes(vertex)) {
+        let idx = this.adjacencyList[key].indexOf(vertex);
+        if (idx !== -1) this.adjacencyList[key].splice(idx, 1);
+      }
+    }
+    delete this.adjacencyList[vertex];
+    return this.adjacencyList;
+  }
+  depth_first_recursive(start) {
+    const result = [];
+    const visited = {};
+    const dfs = (vertex) => {
+      if (!vertex) return null;
+      visited[vertex] = true;
+      result.push(vertex);
+      this.adjacencyList[vertex].forEach((neigbor) => {
+        if (!visited[neigbor]) {
+          dfs(neigbor);
+        }
+      });
+    };
+    dfs(start);
+    console.log(result);
+    console.log(visited);
+    return result;
+  }
+  // this code did not back track, so its not aa depth_first_search, i need to backtrack,å
+  depth_first_iterative(start) {
+    let result = [];
+    let visted = {};
+    let cont = true;
+    while (true && cont) {
+      if (!visted[start]) {
+        visted[start] = true;
+        if (result.includes(start)) {
+          cont = false;
+        }
+        result.push(start);
+      }
+      console.log(this.adjacencyList[start]);
+      let startValue = this.adjacencyList[start];
+      let val = startValue.pop();
+      if (val === undefined) {
+        cont = false;
+      }
+      console.log(visted);
+      console.log(result);
+      start = val;
+      console.log(start);
+    }
+  }
+
+  depth_first_search_iterative_method(start) {
+    const stack = [start];
+    const result = [];
+    const visited = {};
+    visited[start] = true;
+    let currentVertex;
+    while (stack.length) {
+      currentVertex = stack.pop();
+      result.push(currentVertex);
+      this.adjacencyList[currentVertex].forEach((neigbor) => {
+        if (!visited[neigbor]) {
+          visited[neigbor] = true;
+          stack.push(neigbor);
+        }
+      });
+    }
+    return result;
+  }
+
+  breath_first_search(start) {
+    let queue = [start];
+    let visted = {};
+    let result = [];
+    visted[start] = true;
+    let value;
+    while (queue.length) {
+      value = queue.shift();
+      result.push(value);
+      this.adjacencyList[value].forEach((neigbour) => {
+        if (!visted[neigbour]) {
+          visted[neigbour] = true;
+          queue.push(neigbour);
+        }
+      });
+    }
+    return result;
+  }
+}
+
+const graphVertex = new Graph();
+// graphVertex.addVertex("china");
+// graphVertex.addVertex("taiwan");
+// graphVertex.addVertex("japan");
+// graphVertex.addEdges_method("japan", "china");
+// graphVertex.addEdges_method("china", "taiwan");
+// graphVertex.addEdges_method("japan", "taiwan");
+// console.log(graphVertex.remove_vertex("china"));
+// graphVertex.remove_edge("china", "taiwan");
+graphVertex.addVertex("A");
+graphVertex.addVertex("B");
+graphVertex.addVertex("C");
+graphVertex.addVertex("D");
+graphVertex.addVertex("E");
+graphVertex.addVertex("F");
+
+graphVertex.addEdges_method("A", "B");
+graphVertex.addEdges_method("A", "C");
+graphVertex.addEdges_method("B", "D");
+graphVertex.addEdges_method("C", "E");
+graphVertex.addEdges_method("D", "E");
+graphVertex.addEdges_method("D", "F");
+graphVertex.addEdges_method("E", "F");
+// graphVertex.depth_first_recursive("A");
+// graphVertex.depth_first_iterative("A");
+console.log(graphVertex.breath_first_search("A"));
+// console.dir(graphVertex, { depth: Infinity, colors: true });
+/* 
+[1]<----------[o]--------->[9]
+ |
+ |
+ |
+ |
+[11]
+
+
+
+*/
