@@ -198,3 +198,74 @@ transevr(20) pause
 so this the push function changes, it inserts before transerve
 [3, 6, 8, 10, 15, 20]
 */
+class MaxBinaryHeap {
+  constructor() {
+    this.value = [41, 39, 33, 18, 27, 12];
+  }
+  // bubble up is like pushing the value to the first array if its large
+
+  bubbleUp() {
+    let idx = this.value.length - 1;
+    let pushedValue = this.value[idx];
+
+    while (idx > 0) {
+      let parentIdx = Math.floor((idx - 1) / 2);
+      let parentValue = this.value[parentIdx];
+      if (pushedValue <= parentValue) break;
+      if (pushedValue > parentValue) {
+        //swap;
+        let temp = pushedValue;
+        pushedValue = parentValue;
+        temp = parentValue;
+        idx = parentIdx;
+      }
+    }
+  }
+  insert_method(val) {
+    this.value.push(val);
+    this.bubbleUp();
+    return this.value;
+  }
+  extract_method() {
+    let element = this.value[0];
+    let lastVal = this.value.pop();
+    if (this.value.length > 0) {
+      lastVal = this.value[0];
+      // i can also write lastVal = element
+      this.sinkDown();
+    }
+    return element;
+  }
+  sinkDown() {
+    let idx = 0;
+    let element = this.value[0];
+    let arrLength = this.value.length;
+    while (true) {
+      let leftChildIdx = 2 * idx + 1;
+      let rightChildIdx = 2 * idx + 2;
+      let rightChild;
+      let leftChild;
+      let swap = null;
+      if (leftChildIdx < arrLength) {
+        leftChild = this.value[leftChildIdx];
+        if (leftChild > element) {
+          sawp = leftChildIdx;
+        }
+      }
+      if (rightChildIdx < length) {
+        rightChild = this.value[rightChildIdx];
+
+        if (
+          (swap === null && rightChild > element) ||
+          (swap !== null && rightChild > leftChild)
+        ) {
+          swap = rightChildIdx;
+        }
+      }
+      if (swap === null) break;
+      this.value[idx] = this.value[swap];
+      this.value[swap] = element;
+      idx = swap;
+    }
+  }
+}
