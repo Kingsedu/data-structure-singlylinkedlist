@@ -648,7 +648,7 @@ function improvedHashFunction(key, arrayLen) {
 // console.log(improvedHashFunction("cyan", 10));
 // console.log(improvedHashFunction("orange", 10));
 /*
-the hash function and the improvementHash Function all still have collision*********
+the hash function and the giimprovementHash Function all still have collision*********
 HOW TO HANDLE COLLISION
 1----> Separate Chaining
 2----> Linear Probing
@@ -881,3 +881,107 @@ console.log(graphVertex.breath_first_search("A"));
 
 
 */
+class WeightedGraph {
+  constructor() {
+    this.adjacencyList = {};
+  }
+  addVertex(vertex) {
+    if (!this.adjacencyList[vertex]) {
+      this.adjacencyList[vertex] = [];
+    }
+  }
+
+  addEdges(vertex1, vertex2, weight) {
+    this.adjacencyList[vertex1].push({ node: vertex2, weight });
+    this.adjacencyList[vertex2].push({ node: vertex1, weight });
+  }
+  dijkstra_shortest_distance(start, finish) {
+    const node = new PriorityQueue();
+    const distance = {};
+    const previous = {};
+    let path = [];
+    //build up initial state
+    for (let vertex in this.adjacencyList) {
+      if (vertex === start) {
+        distance[vertex] = 0;
+        node.enqueue(vertex, 0);
+      } else {
+        distance[vertex] = Infinity;
+        node.enqueue(vertex, Infinity);
+      }
+      previous[vertex] = null;
+    }
+    while (node.values.length) {
+      let smallest = node.dequeue().val;
+      if (smallest === finish) {
+        while (previous[smallest]) {
+          path.push(smallest);
+          smallest = previous[smallest];
+        }
+        break;
+        /*  console.log(previous);
+        console.log(distance);
+        break; */
+      }
+      if (smallest || distance[smallest] !== Infinity) {
+        for (let neigbor in this.adjacencyList[smallest]) {
+          let nextNode = this.adjacencyList[smallest][neigbor];
+          let candidate = distance[smallest] + nextNode.weight;
+          let nextNeigbour = nextNode.node;
+          if (candidate < distance[nextNeigbour]) {
+            // Updating new smallest distnace to neigbor
+            distance[nextNeigbour] = candidate;
+            // Updating previous - How we got to nneigbor
+
+            previous[nextNeigbour] = smallest;
+            //enqueue in priority queue with new priority
+            node.enqueue(nextNeigbour, candidate);
+          }
+        }
+      }
+    }
+  }
+}
+const weightedGraph = new WeightedGraph();
+weightedGraph.addVertex("A");
+weightedGraph.addVertex("B");
+weightedGraph.addVertex("C");
+weightedGraph.addVertex("D");
+weightedGraph.addVertex("E");
+weightedGraph.addVertex("F");
+
+weightedGraph.addEdges("A", "B", 4);
+weightedGraph.addEdges("A", "C", 2);
+weightedGraph.addEdges("B", "E", 3);
+weightedGraph.addEdges("C", "D", 2);
+weightedGraph.addEdges("C", "F", 4);
+weightedGraph.addEdges("D", "E", 3);
+weightedGraph.addEdges("D", "F", 1);
+weightedGraph.addEdges("E", "F", 1);
+
+class PriorityQueue {
+  constructor() {
+    this.values = [];
+  }
+  enqueue(val, priority) {
+    this.values.push({ val, priority });
+    this._sort();
+  }
+  dequeue() {
+    return this.values.shift();
+  }
+  _sort() {
+    return this.values.sort((a, b) => a.priority - b.priority);
+  }
+}
+
+// console.log(priorityQueue.values);
+// console.dir(weightedGraph, { depth: Infinity, color: true });
+console.log(weightedGraph.dijkstra_shortest_distance("A", "E"));
+// const priorityQueue = new PriorityQueue();
+// priorityQueue.enqueue("B", 3);
+// priorityQueue.enqueue("C", 4);
+// priorityQueue.enqueue("D", 7);
+// priorityQueue.enqueue("E", 14);
+// priorityQueue.enqueue("F", 20);
+// priorityQueue.enqueue("Q", 45);
